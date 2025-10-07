@@ -11,6 +11,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Info, PartyPopper, RotateCcw } from "lucide-react";
 
 const TOTAL_NUMBERS = 99;
@@ -66,7 +77,7 @@ export default function Home() {
     const cardNumbers = [
       ...new Set(
         cardInput
-          .split(",")
+          .split(/[\s,]+/) // Accept space and/or comma as separators
           .map((n) => parseInt(n.trim()))
           .filter((n) => !isNaN(n) && n > 0 && n <= TOTAL_NUMBERS)
       ),
@@ -74,7 +85,7 @@ export default function Home() {
 
     if (cardNumbers.length === 0) {
       setCheckResult({
-        message: `Invalid input. Please use comma-separated numbers from 1 to ${TOTAL_NUMBERS}.`,
+        message: `Invalid input. Please use comma or space-separated numbers from 1 to ${TOTAL_NUMBERS}.`,
         type: "error",
       });
       return;
@@ -92,7 +103,9 @@ export default function Home() {
         (num) => !drawnNumbers.includes(num)
       );
       setCheckResult({
-        message: `Not yet! You are still missing: ${missingNumbers.join(", ")}.`,
+        message: `Not yet! You are still missing: ${missingNumbers.join(
+          ", "
+        )}.`,
         type: "info",
       });
     }
@@ -138,15 +151,34 @@ export default function Home() {
                     disabled={availableNumbers.length === 0}
                     className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-lg py-6"
                   >
-                    {availableNumbers.length > 0 ? "Draw Number" : "All Drawn!"}
+                    {availableNumbers.length > 0
+                      ? "Draw Number"
+                      : "All Drawn!"}
                   </Button>
-                  <Button
-                    onClick={initializeGame}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <RotateCcw className="mr-2 h-4 w-4" /> Reset Game
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        <RotateCcw className="mr-2 h-4 w-4" /> Reset Game
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure you want to reset the game?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. All drawn numbers will
+                          be cleared and the game will start over.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={initializeGame}>
+                          Confirm
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {availableNumbers.length} numbers remaining
@@ -218,8 +250,8 @@ export default function Home() {
               <CardHeader>
                 <CardTitle>Check Your Card</CardTitle>
                 <CardDescription>
-                  Enter your bingo card numbers separated by commas to see if
-                  you've hit bingo.
+                  Enter your bingo card numbers separated by commas or spaces to
+                  see if you've hit bingo.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -269,4 +301,5 @@ export default function Home() {
       </div>
     </main>
   );
-}
+
+    
