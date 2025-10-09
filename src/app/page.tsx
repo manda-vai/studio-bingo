@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Info, PartyPopper, RotateCcw } from "lucide-react";
 
-const TOTAL_NUMBERS = 99;
+const TOTAL_NUMBERS = 75;
 
 export default function Home() {
   const [availableNumbers, setAvailableNumbers] = useState<number[]>([]);
@@ -303,3 +303,5 @@ export default function Home() {
   );
 
 }
+
+    
